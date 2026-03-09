@@ -23,15 +23,12 @@ public class Client {
             return;
         }
 
-        // Connect to server
         Socket socket = new Socket(host, port);
         out = new ObjectOutputStream(socket.getOutputStream());
         System.out.println("Connected to server " + host + ":" + port);
 
-        // 1. Initial full synchronization
         initialSync();
 
-        // 2. Start watching for live changes
         watchDirectory();
     }
 
@@ -41,7 +38,7 @@ public class Client {
             stream.forEach(path -> {
                 try {
                     String rel = localDir.relativize(path).toString();
-                    if (rel.isEmpty()) return; // skip root
+                    if (rel.isEmpty()) return;
 
                     if (Files.isDirectory(path)) {
                         send(new SyncOperation(Operation.CREATE_DIR, rel, null));
@@ -61,7 +58,6 @@ public class Client {
         WatchService watcher = FileSystems.getDefault().newWatchService();
         Map<WatchKey, Path> keyToDir = new HashMap<>();
 
-        // Register ALL existing folders recursively
         registerAll(localDir, watcher, keyToDir);
 
         System.out.println("Watching for changes... (press Ctrl+C to stop)");
@@ -81,7 +77,7 @@ public class Client {
 
                 if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
                     if (Files.isDirectory(fullPath)) {
-                        registerAll(fullPath, watcher, keyToDir); // watch new folder too
+                        registerAll(fullPath, watcher, keyToDir);
                         send(new SyncOperation(Operation.CREATE_DIR, relative, null));
                     } else {
                         byte[] data = Files.readAllBytes(fullPath);

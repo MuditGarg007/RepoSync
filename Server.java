@@ -41,7 +41,6 @@ public class Server {
                     break;
 
                 case WRITE_FILE:
-                    // Make sure parent folders exist
                     Files.createDirectories(target.getParent());
                     Files.write(target, op.data);
                     System.out.println("Written file: " + target + " (" + op.data.length + " bytes)");
@@ -66,7 +65,7 @@ public class Server {
     private static void deleteRecursive(Path path) throws IOException {
         if (Files.isDirectory(path)) {
             try (var stream = Files.walk(path)) {
-                stream.sorted((a, b) -> b.compareTo(a))  // delete children first
+                stream.sorted((a, b) -> b.compareTo(a))
                       .forEach(p -> {
                           try { Files.deleteIfExists(p); }
                           catch (IOException ignored) {}

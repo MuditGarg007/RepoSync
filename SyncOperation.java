@@ -10,8 +10,8 @@ public class SyncOperation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public final Operation operation;
-    public final String relativePath;   // e.g. "images/photo.jpg"
-    public final byte[] data;           // null for dirs and deletes
+    public final String relativePath;
+    public final byte[] data;
 
     public SyncOperation(Operation operation, String relativePath, byte[] data) {
         this.operation = operation;
